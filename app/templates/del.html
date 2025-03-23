@@ -1,0 +1,31 @@
+{% extends "base.html" %} {% block content %}
+<form method="post" action="">
+  {% csrf_token %}
+  <div class="bg-gray-200 w-120 mx-auto p-4 rounded-md shadow-md m-4">
+    <p>Are Sure to delate this {{obj}}?</p>
+    <input
+      type="submit"
+      value="Yes"
+      class="bg-red-500 text-white p-2 rounded-md m-2 "
+    />
+    <a
+      id="previous-page-link"
+      class="bg-green-500 text-white p-2 rounded-md m-2 w-full"
+      href="#"
+      >No</a
+    >
+  </div>
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      var previousUrl = document.referrer; // Get the referrer URL
+      if (previousUrl) {
+        document.getElementById("previous-page-link").href = previousUrl;
+        document.getElementById("previous-page-link").innerText = "Go Back";
+      } else {
+        document.getElementById("previous-page-link").innerText =
+          "No previous page found";
+      }
+    });
+  </script>
+</form>
+{% endblock content %}

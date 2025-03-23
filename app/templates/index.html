@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Home
+{% endblock title %}
+
+{% block content %}
+<div class="min-h-screen flex flex-col items-center justify-center bg-gray-100">
+    <h1 class="text-4xl font-bold text-gray-800 mb-4">Welcome to the Chatroom App</h1>
+    <p class="text-lg text-gray-600 mb-6">Connect and chat with your friends in real-time!</p>
+    <a href="/rooms" class="px-6 py-3 bg-blue-500 text-white rounded-lg shadow hover:bg-blue-600">
+        Enter Chatroom
+    </a>
+</div>
+{% endblock content %}
