@@ -1,61 +1,102 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{% block title %}{% endblock title %}</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <style>
-        input[type="text"], input[type="password"] {
-            width: 100%;
-            padding: 0.5rem;
-            border: 1px solid #ccc;
-            border-radius: 0.25rem;
-        }
-        select {
-            width: 100%;
-            padding: 0.5rem;
-            border: 1px solid #ccc;
-            border-radius: 0.25rem;
-            margin-top: 0.5rem;
-        }
-        input[type="submit"] {
-            width: 100%;
-            padding: 0.5rem;
-            background-color: #3490dc;
-            color: white;
-            border: none;
-            border-radius: 0.25rem;
-            margin-top: 0.5rem;
-            cursor: pointer;
-        }
-        input[type="submit"]:hover {
-            background-color: #2779bd;
-        }
-        textarea {
-            width: 100%;
-            padding: 0.5rem;
-            border: 1px solid #ccc;
-            border-radius: 0.25rem;
-            margin-top: 0.5rem;
-        }
+      input[type="text"],
+      input[type="password"] {
+        width: 100%;
+        padding: 0.5rem;
+        border: 1px solid #ccc;
+        border-radius: 0.25rem;
+      }
+      select {
+        width: 100%;
+        padding: 0.5rem;
+        border: 1px solid #ccc;
+        border-radius: 0.25rem;
+        margin-top: 0.5rem;
+      }
+      input[type="submit"] {
+        width: 100%;
+        padding: 0.5rem;
+        background-color: #3490dc;
+        color: white;
+        border: none;
+        border-radius: 0.25rem;
+        margin-top: 0.5rem;
+        cursor: pointer;
+      }
+      input[type="submit"]:hover {
+        background-color: #2779bd;
+      }
+      textarea {
+        width: 100%;
+        padding: 0.5rem;
+        border: 1px solid #ccc;
+        border-radius: 0.25rem;
+        margin-top: 0.5rem;
+      }
     </style>
-
-</head>
-<body>
-    <header class="p-4 bg-gray-200 flex item-center justify-between">
-        <nav class="flex items-center">
-            <ul class="flex space-x-4 ">
-                <li><a href="{%url 'index'%}">Home</a></li>
-                <li><a href="{%url 'rooms'%}">All Rooms</a></li>
-                <li><a href="{%url 'create_room'%}">Create Room</a></li>
-            </ul>
-        </nav>
-        <form method="GET" action="{%url 'rooms'%}" class="flex items-center">
-            <input type="text" name="q" placeholder="Search rooms" value="{{request.GET.q}}" required>
-            <button type="submit" class="m-1 p-2 border-1 border-[#ccc] rounded mt-1"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-search"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg></button>
-        </form>
+  </head>
+  <body>
+    <header class="py-2 px-4 bg-gray-200 flex item-center justify-between">
+      <nav class="flex items-center">
+        <ul class="flex space-x-4">
+          <li><a href="{%url 'index'%}">Home</a></li>
+          <li><a href="{%url 'rooms'%}">All Rooms</a></li>
+          <li><a href="{%url 'create_room'%}">Create Room</a></li>
+          {% if request.user.is_authenticated %}
+          <li><a href="{% url 'logout'%}">Logout</a></li>
+          {% else %}
+          <li><a href="{% url 'login'%}">Login</a></li>
+          {% endif %}
+        </ul>
+      </nav>
+      <form method="GET" action="{%url 'rooms'%}" class="flex items-center">
+        <input
+          type="text"
+          name="q"
+          placeholder="Search rooms"
+          value="{{request.GET.q}}"
+          required
+        />
+        <button
+          type="submit"
+          class="m-1 p-2 border-1 border-[#ccc] rounded mt-1"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="lucide lucide-search"
+          >
+            <circle cx="11" cy="11" r="8" />
+            <path d="m21 21-4.3-4.3" />
+          </svg>
+        </button>
+      </form>
     </header>
-    {% block content %}{% endblock content %}
-</body>
+    {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+            <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+
+    <main>
+        
+      {% block content %} {% endblock content %}
+    </main>
+  </body>
 </html>
