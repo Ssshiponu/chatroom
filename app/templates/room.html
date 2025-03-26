@@ -15,7 +15,10 @@
                         <span class="text-green-600">@{{ msg.user.username }}</span>
                         <small class="bg-gray-200 rounded-full px-2 text-gray-600">{{ msg.created|timesince }} ago</small>
                     </div>
-                    <p class="mt-2 text-gray-800 text-lg">{{ msg.text }}</p>
+                    <p class="mt-2 text-gray-800 text-lg">{{ msg.text }} <span>{{msg.id}}</span></p>
+                    {% if msg.user == request.user %}
+                    <a href="{% url 'del_msg' msg.id %}" method="POST" class="text-red-500 underline mt-2" onclick="return confirm('Are you sure you want to delete this message?')">romove</a>
+                    {% endif %}
                 </div>
                 {% endfor %}
             </div>

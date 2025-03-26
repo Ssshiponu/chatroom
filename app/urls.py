@@ -11,4 +11,5 @@ urlpatterns = [
     path('login', views.log_in, name='login'),
     path("logout", views.log_out, name='logout'),
     path("signup", views.sign_up, name="signup"),
+    path('msg/del/<int:msg_id>', views.del_msg, name='del_msg'),
 ]

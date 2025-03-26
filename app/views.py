@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
 from django.db.models import Q
+from django.http import HttpRequest
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
@@ -45,7 +46,9 @@ def create_room(requests):
     if requests.method == "POST":
         form = RoomForm(requests.POST)
         if form.is_valid():
-            form.save()
+            room = form.save(commit=False)
+            room.host = requests.user
+            room.save()
             return redirect('rooms')
     return render(requests, 'create_room.html', {"form": RoomForm()})
 
@@ -63,11 +66,13 @@ def edit_room(requests, room_id):
 @login_required(login_url='login')
 def del_room(requests, room_id):
     room = Room.objects.get(id=room_id)
-    if requests.method == "POST":
+    if room.host == requests.user:
         room.delete()
+        messages.success(requests, "Room deleted")
         return redirect('rooms')
-        
-    return render(requests, 'del.html', {"obj":room})
+    
+    messages.error(requests, "You can't delete this room")
+    return redirect('rooms')
 
 def log_in(requests):
     if requests.method == "POST":
@@ -108,3 +113,12 @@ def sign_up(requests):
     
     form = UserCreationForm()
     return render(requests, 'signup.html', {"form": form})
+
+def del_msg(requests, msg_id):
+    msg = Msg.objects.get(id=msg_id)
+    if requests.user != msg.user:
+        messages.error(requests, "You can't delete this message")
+        return redirect('room', room_id=msg.room.id)
+    msg.delete()
+    messages.success(requests, f"Message deleted")
+    return redirect('room', room_id=msg.room.id)
