@@ -2,14 +2,14 @@ from django.shortcuts import render, redirect
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
+from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
-from .models import Room, Topic
+from .models import Room, Topic, Msg
 from .form import RoomForm
 
-# Create your views here.
+
 def index(requests):
-    messages.success(requests, "Hello")
     return render(requests, 'index.html')
 
 @login_required(login_url='login')
@@ -26,7 +26,20 @@ def rooms(requests):
 @login_required(login_url='login')
 def room(requests, room_id):
     room = Room.objects.get(id=room_id)
-    return render(requests, 'room.html', {"room": room})
+    msgs = room.msg_set.all().order_by('created')
+    members = room.members.all()
+
+    if requests.method == "POST":
+        Msg.objects.create(
+            user=requests.user,
+            room=room,
+            text=requests.POST.get('msg')
+        )
+        room.members.add(requests.user)
+        return redirect('room', room_id=room.id)
+    
+    return render(requests, 'room.html', {"room": room, "msgs": msgs, "members": members})
+
 @login_required(login_url='login')
 def create_room(requests):
     if requests.method == "POST":
@@ -79,4 +92,19 @@ def log_in(requests):
 @login_required(login_url='login')
 def log_out(requests):
     logout(requests)
+    messages.warning(requests, "Logout successfully ")
     return redirect('index')
+
+def sign_up(requests):
+    if requests.method == "POST":
+        form = UserCreationForm(requests.POST)
+        if form.is_valid():
+            user = form.save()
+            username = form.cleaned_data.get('username')
+            messages.success(requests, f'Account created for {username}')
+            user.save()
+            login(requests, user)
+            return redirect('rooms')
+    
+    form = UserCreationForm()
+    return render(requests, 'signup.html', {"form": form})

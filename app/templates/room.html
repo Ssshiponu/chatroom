@@ -1,8 +1,54 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="m-3 p-2 bg-gray-200 rounded">
-    <a href="/room/{{room.id}}"><h2 class="font-bold text-lg">{{room.name}}</h2></a>
-    <hr>
-    <p>{{room.description}}</p>
+<div class=" p-2 bg-gray-200 rounded">
+    <a href="/room/{{ room.id }}" class="font-bold text-lg block hover:underline">{{ room.name }}</a>
+    <p class="text-gray-500">{{ room.description }}</p>
+    <hr class="my-3">
+    <div class="flex grid grid-cols-2 gap-4">
+        <div class="bg-gray-300 m-3 p-4 rounded flex flex-col h-[28rem] "> 
+            <!-- Scrollable message area -->
+            <h3 class='text-xl'>Conversations</h3>
+            <div class="flex-1 overflow-y-auto p-2 space-y-3 " id="messages-container">
+                {% for msg in msgs %}
+                <div class="py-2 px-4 bg-gray-100 rounded">
+                    <div class="flex items-center justify-between">
+                        <span class="text-green-600">@{{ msg.user.username }}</span>
+                        <small class="bg-gray-200 rounded-full px-2 text-gray-600">{{ msg.created|timesince }} ago</small>
+                    </div>
+                    <p class="mt-2 text-gray-800 text-lg">{{ msg.text }}</p>
+                </div>
+                {% endfor %}
+            </div>
+
+            <!-- Message input & send button -->
+            <form method="POST" action="" class="bg-white p-2 rounded shadow-md flex items-center">
+                {% csrf_token %}
+                <input type="text" name="msg" id="msg" class="flex-1 p-2 border border-gray-300 rounded" placeholder="Type your message here...">
+                <button type="submit" class="ml-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">Send</button>
+            </form>
+        </div>
+        <div class="m-3 p-4 bg-gray-300 rounded">
+            <h3 class="text-xl">Members</h3>
+            <ul class="flex flex-col space-y-2 mt-4 text-lg">
+                {% for member in members %}
+                <li>
+                    <a href="#" class="text-green-600 underline">{{ member.username }}</a>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
 </div>
+
+<script>
+    function scrollToBottom() {
+        let container = document.getElementById("messages-container");
+        container.scrollTop = container.scrollHeight;
+    }
+
+    // Scroll to bottom on page load
+    document.addEventListener("DOMContentLoaded", scrollToBottom);
+
+</script>
+
 {% endblock content %}

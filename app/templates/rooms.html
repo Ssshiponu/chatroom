@@ -32,6 +32,7 @@
         ><h2 class="font-bold text-lg">{{room.name}}</h2></a
       >
       <p>{{room.description}}</p>
+      {% if room.host == request.user %}
       <div class="">
         <a class="underline text-green-600" href="/room/edit/{{room.id}} "
           >edit</a
@@ -39,7 +40,7 @@
         <a class="underline text-red-600" href="/room/del/{{room.id}}"
           >delete</a
         >
-      </div>
+      </div>{% endif %}
     </div>
     {% endfor %}
   </div>
